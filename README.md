@@ -15,7 +15,7 @@ This repository contains a machine learning pipeline to predict Minimum Inhibito
 - **Outputs**:
   - MIC prediction model (genotype → phenotype)
   - Ranked list of resistance-associated genetic features
-  - Phylogeny-aware performance validation
+  
  
   - # Bacterial Persistence & Colistin Resistance Prediction
 
