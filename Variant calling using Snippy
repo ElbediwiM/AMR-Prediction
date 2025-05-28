@@ -1,0 +1,55 @@
+1. Install Snippy
+Install Snippy via Bioconda:
+
+conda create -n snippy_env -c bioconda snippy
+conda activate snippy_env
+
+2. Prepare Reference Genome
+Place the reference genome (ATCC 14028.fna) in directory E:/Evolution.
+
+Snippy will auto-index the reference, but you can pre-index it for efficiency:
+
+
+samtools faidx ATCC 14028.fna
+bwa index ATCC 14028.fna
+
+3. Run Snippy on All Samples
+Use a loop to process all 68 samples.
+
+Assumptions:
+
+Paired-end files are named like SAMPLE_R1.fq.gz and SAMPLE_R2.fq.gz.
+
+
+
+# Create a list of samples 
+for r1 in *_R1.fq.gz; do
+
+# Extract sample name (e.g., "SAMPLE" from "SAMPLE_R1.fq.gz")
+  SAMPLE=$(basename "$r1" _R1.fq.gz)
+  
+  # Run Snippy for this sample
+  snippy \
+    --outdir "$SAMPLE"_output \
+    --ref 14028.fa \
+    --R1 "$SAMPLE"_R1.fq.gz \
+    --R2 "$SAMPLE"_R2.fq.gz \
+    --cpus 4  # Adjust based on available CPUs
+done
+
+4. Combine Results with snippy-core
+Generate a core SNP alignment and consensus files from all samples:
+
+# List all sample output directories
+snippy-core --prefix core_output $(ls -d *_output)
+
+5. Output Files
+Individual samples: VCF, BAM, and consensus FASTA in SAMPLE_output/.
+
+Combined results:
+
+core_output.aln: Core SNP alignment (FASTA).
+
+core_output.tab: SNP matrix (TAB-delimited).
+
+core_output.vcf: Merged VCF for all samples.
