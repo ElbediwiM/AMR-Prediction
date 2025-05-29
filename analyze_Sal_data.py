@@ -7,12 +7,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
-from sklearn.preprocessing import StandardScaler
-from sklearn.feature_selection import SelectFromModel, RFE
-from sklearn.linear_model import Lasso, LinearRegression, ElasticNet
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error, r2_score
 import os
 
 # Set the style for plots
