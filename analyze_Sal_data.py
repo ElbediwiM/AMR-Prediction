@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-E. coli SNP and MIC Analysis
+Salmonella SNP and MIC Analysis
 This script performs exploratory data analysis and builds predictive models
-to identify SNPs correlated with MIC values in E. coli genomes evolved with colistin.
+to identify SNPs correlated with MIC values in Salmonella genomes evolved with colistin.
 """
 
 import pandas as pd
