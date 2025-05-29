@@ -2,7 +2,7 @@
 
 
 ## Project Overview
-This repository contains a machine learning pipeline to predict Minimum Inhibitory Concentration (MIC) changes in *E. coli* populations under colistin selection pressure, using genomic data from 68 experimentally evolved bacterial genomes. The workflow links genetic variations (SNPs, indels, gene presence/absence) to phenotypic resistance evolution.
+This repository contains a machine learning pipeline to predict Minimum Inhibitory Concentration (MIC) changes in *Salmonella Typhimurium* populations under colistin selection pressure, using genomic data from 68 experimentally evolved bacterial genomes. The workflow links genetic variations (SNPs, indels, gene presence/absence) to phenotypic resistance evolution.
 
 ---
 
@@ -20,7 +20,7 @@ This repository contains a machine learning pipeline to predict Minimum Inhibito
   - # Bacterial Persistence & Colistin Resistance Prediction
 
 ## Project Overview
-This repository contains a machine learning pipeline to predict Minimum Inhibitory Concentration (MIC) changes in *E. coli* populations under colistin selection pressure, using genomic data from 68 experimentally evolved bacterial genomes. The workflow links genetic variations (SNPs, indels, gene presence/absence) to phenotypic resistance evolution.
+This repository contains a machine learning pipeline to predict Minimum Inhibitory Concentration (MIC) changes in *Salmonella Typhimurium* populations under colistin selection pressure, using genomic data from 68 experimentally evolved bacterial genomes. The workflow links genetic variations (SNPs, indels, gene presence/absence) to phenotypic resistance evolution.
 
 ---
 
