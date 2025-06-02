@@ -3,9 +3,6 @@
 # Analysis of Salmonella typhimurium bacteria evolved in colistin antibiotic
 # Under aerobic and anaerobic conditions
 
-This file contains all the Python code used in the analysis of SNPs and MIC correlation
-in Salmonella typhimurium bacteria evolved in colistin antibiotic under both aerobic
-and anaerobic conditions.
 
 ## Table of Contents:
 1. Aerobic Analysis
@@ -23,10 +20,7 @@ and anaerobic conditions.
    2.4 Data Merging for Modeling
    2.5 Model Training and Validation
 
-3. Combined Analysis
-   3.1 Dataset Merging and Harmonization
-   3.2 Combined Model Training and Validation
-"""
+
 
 #######################
 # 1. AEROBIC ANALYSIS #
@@ -794,156 +788,3 @@ print('\nEncoded combined dataset shape:', combined_data_encoded.shape)
 print('Encoded combined dataset columns (first 10):', combined_data_encoded.columns.tolist()[:10])
 
 
-# 3.2 Combined Model Training and Validation
-# ----------------------------------------
-
-# Note: This code was not fully executed due to time constraints, but is provided for completeness
-
-# Load the combined dataset
-data_combined = pd.read_csv('combined_snp_mic_data_encoded.csv')
-
-# Separate features and target
-X_combined = data_combined.drop(['day', 'mic', 'resistant'], axis=1)
-y_combined = data_combined['resistant']
-
-# Split the data into training and testing sets
-X_train_combined, X_test_combined, y_train_combined, y_test_combined = train_test_split(
-    X_combined, y_combined, test_size=0.25, random_state=42, stratify=y_combined
-)
-
-print('Combined dataset information:')
-print(f'Total samples: {len(data_combined)}')
-print(f'Features: {X_combined.shape[1]}')
-print(f'Training samples: {len(X_train_combined)}')
-print(f'Testing samples: {len(X_test_combined)}')
-print(f'Resistant samples: {sum(y_combined == 1)}')
-print(f'Susceptible samples: {sum(y_combined == 0)}')
-print(f'Aerobic samples: {sum(data_combined["is_aerobic"] == 1)}')
-print(f'Anaerobic samples: {sum(data_combined["is_aerobic"] == 0)}')
-
-# Define models to evaluate
-models_combined = {
-    'Logistic Regression': LogisticRegression(max_iter=1000, random_state=42),
-    'Random Forest': RandomForestClassifier(random_state=42),
-    'Gradient Boosting': GradientBoostingClassifier(random_state=42),
-    'SVM': SVC(probability=True, random_state=42)
-}
-
-# Evaluate each model using cross-validation
-print('\nModel evaluation using 5-fold cross-validation:')
-cv_results_combined = {}
-for name, model in models_combined.items():
-    scores = cross_val_score(model, X_train_combined, y_train_combined, cv=5, scoring='accuracy')
-    cv_results_combined[name] = scores
-    print(f'{name}: Mean accuracy = {scores.mean():.4f}, Std = {scores.std():.4f}')
-
-# Hyperparameter tuning for the best model based on CV results
-best_model_name_combined = max(cv_results_combined, key=lambda k: cv_results_combined[k].mean())
-print(f'\nBest model based on cross-validation: {best_model_name_combined}')
-
-# Define hyperparameter grids for each model
-param_grids_combined = {
-    'Logistic Regression': {
-        'C': [0.001, 0.01, 0.1, 1, 10, 100],
-        'penalty': ['l1', 'l2'],
-        'solver': ['liblinear']
-    },
-    'Random Forest': {
-        'n_estimators': [50, 100, 200],
-        'max_depth': [None, 5, 10, 15],
-        'min_samples_split': [2, 5, 10]
-    },
-    'Gradient Boosting': {
-        'n_estimators': [50, 100, 200],
-        'learning_rate': [0.01, 0.1, 0.2],
-        'max_depth': [3, 5, 7]
-    },
-    'SVM': {
-        'C': [0.1, 1, 10, 100],
-        'gamma': ['scale', 'auto', 0.1, 0.01],
-        'kernel': ['rbf', 'linear']
-    }
-}
-
-# Perform grid search for the best model
-print(f'\nPerforming hyperparameter tuning for {best_model_name_combined}...')
-grid_search_combined = GridSearchCV(
-    models_combined[best_model_name_combined],
-    param_grids_combined[best_model_name_combined],
-    cv=5,
-    scoring='accuracy',
-    n_jobs=-1
-)
-grid_search_combined.fit(X_train_combined, y_train_combined)
-
-print(f'Best parameters: {grid_search_combined.best_params_}')
-print(f'Best cross-validation score: {grid_search_combined.best_score_:.4f}')
-
-# Train the best model with optimized hyperparameters
-best_model_combined = grid_search_combined.best_estimator_
-best_model_combined.fit(X_train_combined, y_train_combined)
-
-# Evaluate on test set
-y_pred_combined = best_model_combined.predict(X_test_combined)
-accuracy_combined = accuracy_score(y_test_combined, y_pred_combined)
-precision_combined = precision_score(y_test_combined, y_pred_combined)
-recall_combined = recall_score(y_test_combined, y_pred_combined)
-f1_combined = f1_score(y_test_combined, y_pred_combined)
-
-print('\nTest set performance:')
-print(f'Accuracy: {accuracy_combined:.4f}')
-print(f'Precision: {precision_combined:.4f}')
-print(f'Recall: {recall_combined:.4f}')
-print(f'F1 Score: {f1_combined:.4f}')
-
-# Display confusion matrix
-cm_combined = confusion_matrix(y_test_combined, y_pred_combined)
-print('\nConfusion Matrix:')
-print(cm_combined)
-
-# Classification report
-print('\nClassification Report:')
-print(classification_report(y_test_combined, y_pred_combined))
-
-# Feature importance analysis
-if best_model_name_combined in ['Random Forest', 'Gradient Boosting']:
-    feature_importances_combined = best_model_combined.feature_importances_
-    feature_names_combined = X_combined.columns
-    
-    # Sort features by importance
-    sorted_idx_combined = np.argsort(feature_importances_combined)[::-1]
-    
-    print('\nTop 15 most important features:')
-    for i in range(min(15, len(sorted_idx_combined))):
-        idx = sorted_idx_combined[i]
-        print(f'{feature_names_combined[idx]}: {feature_importances_combined[idx]:.4f}')
-    
-    # Check if 'is_aerobic' is an important feature
-    aerobic_idx = list(feature_names_combined).index('is_aerobic')
-    aerobic_importance = feature_importances_combined[aerobic_idx]
-    print(f'\nImportance of aerobic vs. anaerobic condition: {aerobic_importance:.4f}')
-    print(f'Rank of condition among all features: {list(sorted_idx_combined).index(aerobic_idx) + 1} out of {len(sorted_idx_combined)}')
-    
-elif best_model_name_combined == 'Logistic Regression':
-    coefficients_combined = best_model_combined.coef_[0]
-    feature_names_combined = X_combined.columns
-    
-    # Sort features by absolute coefficient value
-    sorted_idx_combined = np.argsort(np.abs(coefficients_combined))[::-1]
-    
-    print('\nTop 15 most important features:')
-    for i in range(min(15, len(sorted_idx_combined))):
-        idx = sorted_idx_combined[i]
-        print(f'{feature_names_combined[idx]}: {coefficients_combined[idx]:.4f}')
-    
-    # Check if 'is_aerobic' is an important feature
-    aerobic_idx = list(feature_names_combined).index('is_aerobic')
-    aerobic_coef = coefficients_combined[aerobic_idx]
-    print(f'\nCoefficient for aerobic vs. anaerobic condition: {aerobic_coef:.4f}')
-    print(f'Rank of condition among all features: {list(sorted_idx_combined).index(aerobic_idx) + 1} out of {len(sorted_idx_combined)}')
-
-# Save the best model
-with open('best_model_combined.pkl', 'wb') as f:
-    pickle.dump(best_model_combined, f)
-
-print('\nBest model saved as best_model_combined.pkl')
