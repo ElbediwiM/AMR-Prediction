@@ -12,7 +12,7 @@ from typing import Dict, List, Any
 import os
 
 # Configuration - Update this URL after backend deployment
-API_BASE_URL = os.getenv("API_BASE_URL", "https://wagon-bootcamp-462414.appspot.com")
+API_BASE_URL = os.getenv("API_BASE_URL", "https://wagon-bootcamp-462414.ew.r.appspot.com/")
 
 # Page configuration
 st.set_page_config(
