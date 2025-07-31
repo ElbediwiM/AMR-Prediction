@@ -105,13 +105,7 @@ def main():
     # Header
     st.markdown('<h1 class="main-header">💊 Drug Recommendation System</h1>', unsafe_allow_html=True)
     
-    # Show API URL info
-    st.markdown(f"""
-    <div class="info-box">
-        <p><strong>Backend API:</strong> {API_BASE_URL}</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
+       
     # Check API health
     with st.spinner("Connecting to backend API..."):
         api_healthy = check_api_health()
